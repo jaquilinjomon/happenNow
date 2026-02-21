@@ -11,7 +11,7 @@ Member 1: Jaquilin Jomon - MITS KOCHI
 Member 2: Fahmi Rasheed - MITS KOCHI
 
 Hosted Project Link
-Check it out here (Update if different)
+https://happen-now-git-main-jaquilinjomon2003-8766s-projects.vercel.app/
 
 Project Description
 HappenNow is a real-time event discovery and management platform designed to bridge the gap between event organizers and attendees. It allows users to browse upcoming events, view details, and manage their schedules seamlessly.
