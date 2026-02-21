@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - HappnNow</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: linear-gradient(135deg, #ffb3a7, #ff9a92);
+      color: white;
+      padding: 20px;
+      overflow-y: auto;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+    }
+    .logo-box {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .logo-box img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+    .logo-box h2 {
+      font-size: 20px;
+    }
+    .nav-item {
+      padding: 12px 15px;
+      margin: 8px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .main {
+      margin-left: 280px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: white;
+      padding: 20px 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ffb3a7;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 30px;
+    }
+    .page {
+      display: none;
+      animation: fadeIn 0.3s;
+    }
+    .page.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    /* Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #ff9a92;
+    }
+    .stat-label {
+      color: #999;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    th {
+      background: #ffb3a7;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    tr:hover {
+      background: #fafafa;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: 600;
+    }
+
+    .btn-accept {
+      background: #7ca67c;
+      color: white;
+    }
+
+    .btn-accept:hover {
+      background: #6a8e6a;
+    }
+
+    .btn-reject {
+      background: #c97965;
+      color: white;
+    }
+
+    .btn-reject:hover {
+      background: #b66754;
+    }
+
+    .btn-primary {
+      background: #ffb3a7;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #ff9a92;
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #f0f0f0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #ffb3a7;
+      box-shadow: 0 0 8px rgba(255, 179, 167, 0.2);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-pending {
+      background: #ffe4d6;
+      color: #d4845c;
+    }
+
+    .badge-approved {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .badge-rejected {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 200px;
+      }
+
+      .main {
+        margin-left: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo-box">
+        <img src="logo.jpg" alt="HappnNow">
+        <h2>HappnNow</h2>
+      </div>
+      <div class="nav-item active" onclick="showPage('dashboard')">Dashboard</div>
+      <div class="nav-item" onclick="showPage('events')">Events</div>
+      <div class="nav-item" onclick="showPage('bookings')">Bookings</div>
+      <div class="nav-item" onclick="showPage('payments')">Payments</div>
+      <div class="nav-item" onclick="showPage('users')">Users</div>
+      <div class="nav-item" onclick="logout()">Logout</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+      <div class="header">
+        <h1>Admin Dashboard</h1>
+      </div>
+
+      <div class="content">
+        <!-- Dashboard Page -->
+        <div class="page active" id="dashboard">
+          <h2 style="margin-bottom: 20px;">Overview</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="totalEvents">0</div>
+              <div class="stat-label">Total Events</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="totalBookings">0</div>
+              <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="pendingEvents">0</div>
+              <div class="stat-label">Pending Events</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Events Page -->
+        <div class="page" id="events">
+          <h2 style="margin-bottom: 20px;">Event Management</h2>
+          <table id="eventsTable">
+            <thead>
+              <tr>
+                <th>Event Name</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Organizer</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="eventsList"></tbody>
+          </table>
+        </div>
+
+        <!-- Bookings Page -->
+        <div class="page" id="bookings">
+          <h2 style="margin-bottom: 20px;">Booking Management</h2>
+          <table id="bookingsTable">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Event</th>
+                <th>Customer</th>
+                <th>Tickets</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="bookingsList"></tbody>
+          </table>
+        </div>
+
+        <!-- Payments Page -->
+        <div class="page" id="payments">
+          <h2 style="margin-bottom: 20px;">Payment Management</h2>
+          <table id="paymentsTable">
+            <thead>
+              <tr>
+                <th>Payment ID</th>
+                <th>Booking ID</th>
+                <th>Amount</th>
+                <th>Payment Method</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsList"></tbody>
+          </table>
+        </div>
+
+        <!-- Users Page -->
+        <div class="page" id="users">
+          <h2 style="margin-bottom: 20px;">User Management</h2>
+          <table id="usersTable">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="usersList"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    // Load user info
+    function loadUserInfo() {
+      const userData = JSON.parse(localStorage.getItem('user') || '{"user":"Admin","role":"admin"}');
+      document.getElementById('userName').textContent = userData.user.charAt(0).toUpperCase() + userData.user.slice(1);
+      document.getElementById('userAvatar').textContent = userData.user.charAt(0).toUpperCase();
+    }
+
+    // Show page
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      event.target.closest('.nav-item').classList.add('active');
+      
+      if (pageId === 'events') loadEventsTable();
+      if (pageId === 'bookings') loadBookingsTable();
+      if (pageId === 'payments') loadPaymentsTable();
+      if (pageId === 'users') loadUsersTable();
+      if (pageId === 'dashboard') loadDashboard();
+    }
+
+    // Load dashboard
+    function loadDashboard() {
+      document.getElementById('totalEvents').textContent = events.length;
+      document.getElementById('totalBookings').textContent = bookings.length;
+      document.getElementById('pendingEvents').textContent = events.filter(e => e.status === 'pending').length;
+    }
+
+    // Load events table
+    function loadEventsTable() {
+      const tbody = document.getElementById('eventsList');
+      tbody.innerHTML = events.map(e => `
+        <tr>
+          <td>${e.name}</td>
+          <td>${e.category}</td>
+          <td>${e.date}</td>
+          <td>${e.organizer}</td>
+          <td><span class="badge badge-${e.status}">${e.status.charAt(0).toUpperCase() + e.status.slice(1)}</span></td>
+          <td>${e.status === 'pending' ? `<button class="btn btn-accept" onclick="approveEvent(${e.id})">Approve</button> <button class="btn btn-reject" onclick="rejectEvent(${e.id})">Reject</button>` : 'Processed'}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Load bookings table
+    function loadBookingsTable() {
+      const tbody = document.getElementById('bookingsList');
+      tbody.innerHTML = bookings.map(b => `
+        <tr>
+          <td>${b.id}</td>
+          <td>${b.event}</td>
+          <td>${b.customer}</td>
+          <td>${b.tickets}</td>
+          <td>$${b.amount}</td>
+          <td>${b.date}</td>
+          <td><span class="badge badge-${b.status === 'confirmed' ? 'approved' : 'pending'}">${b.status.charAt(0).toUpperCase() + b.status.slice(1)}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // Load payments table
+    function loadPaymentsTable() {
+      const tbody = document.getElementById('paymentsList');
+      tbody.innerHTML = payments.map(p => `
+        <tr>
+          <td>${p.id}</td>
+          <td>${p.booking}</td>
+          <td>$${p.amount}</td>
+          <td>${p.method}</td>
+          <td>${p.date}</td>
+          <td><span class="badge badge-${p.status}">${p.status.charAt(0).toUpperCase() + p.status.slice(1)}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // Load users table
+    function loadUsersTable() {
+      const tbody = document.getElementById('usersList');
+      tbody.innerHTML = usersList.map(u => `
+        <tr>
+          <td>${u.username}</td>
+          <td>${u.email}</td>
+          <td>${u.role}</td>
+          <td>${u.joined}</td>
+          <td><span class="badge badge-approved">${u.status.charAt(0).toUpperCase() + u.status.slice(1)}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // Event actions
+    function approveEvent(id) {
+      const event = events.find(e => e.id === id);
+      if (event) event.status = 'approved';
+      loadEventsTable();
+      alert('Event approved successfully!');
+    }
+
+    function rejectEvent(id) {
+      const event = events.find(e => e.id === id);
+      if (event) event.status = 'rejected';
+      loadEventsTable();
+      alert('Event rejected!');
+    }
+
+    // Logout
+    function logout() {
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    }
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      loadUserInfo();
+      loadDashboard();
+    });
+  </script>
+</body>
+</html>
